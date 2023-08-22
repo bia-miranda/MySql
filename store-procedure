@@ -1,0 +1,61 @@
+
+-- criando store procedure para inserir registros na tabela pagamento
+create procedure sp_insPgto(in nm_pgmt varchar(15)) -- parametro q a procedure vai receber
+insert into tbl_Pagamento(nm_pgmt) -- declaraçoes / oq ela vai fazer
+values(nm_pgmt);
+
+drop procedure sp_insPgto;
+
+-- executando a store procedure
+call sp_insPgto('Pix');
+call sp_insPgto('Boleto');
+call sp_insPgto('Cartão');
+
+create procedure spMostrarPgto()
+select * from tbl_Pagamento;
+call spMostrarPgto;
+
+delimiter $$
+create procedure sp_AltPgmto(
+in nm_pgmt varchar(15),
+in p_id int 
+)
+begin
+	update tbl_Pagamento
+	set nm_pgmt = nm_pgmt where id_pgmt = p_id;
+end $$
+delimiter ;
+
+call sp_AltPgmto('Cartão', 2 );
+
+
+create procedure sp_insCli
+insert into tbl_Cliente(
+in nm_Cliente,
+no_CPF,
+nm_Log,
+no_Log,
+ds_Complemento,
+nm_CEP,
+nm_Bairro,
+nm_Cidade ,
+sg_UF ,
+ds_login,
+ds_senha,
+ds_Status
+values('Lana', '12345678910', 'rua dos geranios', '175', 'casa', '07790870', 'portal', 'cajamar', 'sp', 'lana', '123', 1)
+);
+
+-- correcao exercicio
+drop procedure if exists sp_InsCli;
+delimiter //
+
+create procedure sp_InsCli(
+	in pNome varchar(80), pCPF varchar(11), pLogradouro varchar(80), pNumero varchar(5), pComp varchar(40), pCEP char(8), pBairro varchar(30), pUF char(2), pLogin varchar(20), pSenha char(6), pStatus bit(1), pTelefone char(11)
+)
+begin 
+
+
+
+end //
+delimiter ;
