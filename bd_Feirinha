@@ -1,0 +1,102 @@
+CREATE DATABASE bd_Feirinha;
+USE bd_Feirinha;
+DROP DATABASE  bd_Feirinha;
+
+CREATE TABLE Cestinha(
+	id_cestinha int primary key auto_increment,
+    vl_total decimal(10,2),
+    produto_cestinha varchar(30)
+);
+
+select * from Cestinha;
+
+CREATE TABLE Pastel(
+	id_pastel int primary key auto_increment,
+    id_cestinha int,
+    sabor_pastel varchar(30),
+    qtd_pastel int,
+    constraint foreign key(id_cestinha) references Cestinha(id_cestinha)
+);
+CREATE TABLE Frutas(
+	id_frutas int primary key auto_increment,
+    id_cestinha int,
+    nome_fruta varchar(30),
+    tipo_fruta varchar(30),
+    constraint foreign key(id_cestinha) references Cestinha(id_cestinha)
+);
+CREATE TABLE Legumes(
+	id_legumes int primary key auto_increment,
+    id_cestinha int,
+    nome_legume varchar(30),
+    tipo_legume varchar(30),
+    constraint foreign key(id_cestinha) references Cestinha(id_cestinha)
+);
+
+
+
+
+drop procedure if exists sp_insProd;
+delimiter $$
+create procedure sp_insProd(
+	in pProduto varchar(30),
+	in pVlTotal decimal(10,2),
+    in pSaborPast varchar(30),
+    in pqntPast int,
+    in pNmFrut varchar(30),
+    in pTpFrut varchar(30),
+    in pNmLeg varchar(30),
+    in pTpLeg varchar(30)
+)
+begin
+	declare vCd int;
+    declare erro_SQL tinyint default false;
+    declare continue handler for sqlexception set erro_SQL = true;
+    
+    start transaction;
+    
+    if(pProduto = 'Pastel') then
+		insert into Cestinha(vl_total, produto_cestinha)
+		values(pVlTotal, 'Pastel');
+		
+		set vCd = last_insert_id();  
+        
+		insert into Pastel(id_pastel, id_cestinha, sabor_pastel, qtd_pastel)
+		values(vcd, pSaborPast, pqntPast);
+        
+	elseif(pProduto = 'Fruta') then
+		insert into Cestinha(vl_total, pTipoProduto)
+		values(pVlTotal, 'Fruta');
+		
+		set vCd = last_insert_id();  
+        
+		insert into Frutas(id_fruta, id_cestinha, nome_fruta, tipo_fruta)
+		values(vcd, pNmFrut, pTpFrut);
+	
+    else
+		insert into Cestinha(vl_total, pTipoProduto)
+		values(pVlTotal, 'Legumes');
+		
+		set vCd = last_insert_id();  
+        
+		insert into Legumes(id_legume, id_cestinha, nome_legume, tipo_legume)
+		values(vcd, pNmLeg, pTpLeg);
+        
+	end if;	
+
+	if(erro_SQL = false) then 
+		commit;
+        select 'Produto adicionado com sucesso :)';
+	else
+		rollback;
+        select 'Ocorreu um erro :(';
+	end if;
+
+end $$    
+delimiter ;
+
+call sp_insProd();
+
+select * from Cestinha;
+select * from Pastel;
+select * from Frutas;
+select * from Legumes;
